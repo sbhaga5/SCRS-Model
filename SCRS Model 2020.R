@@ -156,7 +156,12 @@ RunModel <- function(Analysis_Type = AnalysisType,
                      Sim_Volatility = Sim_Volatility, 
                      ERPolicyCurrentHires = ER_Policy_CurrentHires, 
                      ERPolicyNewHires = ER_Policy_NewHires, 
-                     Scen_Type = ScenType){
+                     Scen_Type = ScenType,
+                     ADEC_Trigger = ADECTrigger,
+                     CostSharingNC = CostSharing_NC,
+                     CostSharingAmo = CostSharing_Amo,
+                     CostSharing_Pct = CostSharingPct,
+                     ORPOffsetDBNC = ORPOffset_DBNC){
   #Default is statutory, change to ADC amo policy if need be
   if(ERPolicyCurrentHires == 'ADC'){
     AmoYearsInput_CurrentHires[,2] <- 20
@@ -211,7 +216,7 @@ RunModel <- function(Analysis_Type = AnalysisType,
     if(AllNewHires[i] == 0) {AmoRate_NewHires[i-2] <- 0}
     
     if(i >= (StartIndex+1)){
-      if(CostSharing_Amo == 'Yes'){
+      if(CostSharingAmo == 'Yes'){
         EE_AmoRate_NewHires[i] <- AmoRate_NewHires[i]/2
       } else {
         EE_AmoRate_NewHires[i] <- 0
@@ -228,7 +233,7 @@ RunModel <- function(Analysis_Type = AnalysisType,
     
     #Values based on ER Policy
     if(ERPolicyCurrentHires == 'Statutory Rate'){
-      if((ADECTrigger == 'No') || ((ADECTrigger == 'Yes') && (FR_AVA[i-1] <  1))){
+      if((ADEC_Trigger == 'No') || ((ADEC_Trigger == 'Yes') && (FR_AVA[i-1] <  1))){
         ER_Amo_CurrentHires[i] <- ER_AmoRate_CurrentHires[i-2]*DBLegacyPayroll[i]
         ER_Amo_Stat_NewHires[i] <- ER_AmoRate_NewHires[i-2]*DBNewHirePayroll[i]
         ER_Amo_ORP_CurrentHires[i] <- max(ER_AmoRate_ORP[i-2],0)*ORPCurrentPayroll[i]
@@ -250,7 +255,7 @@ RunModel <- function(Analysis_Type = AnalysisType,
     }
     
     if(ERPolicyNewHires == 'Statutory Rate'){
-      if((ADECTrigger == 'No') || ((ADECTrigger == 'Yes') && (FR_AVA[i-1] <  1))){
+      if((ADEC_Trigger == 'No') || ((ADEC_Trigger == 'Yes') && (FR_AVA[i-1] <  1))){
         ER_Amo_ADC_NewHires[i] <- 0
       } else {
         ER_Amo_ADC_NewHires[i] <- max(-ER_NC_CurrentHires[i]-ER_NC_NewHires[i]-ER_Amo_CurrentHires[i],AmoRate_NewHires[i-2]*AllNewHires[i]-EE_Amo_NewHires[i])
@@ -327,11 +332,11 @@ RunModel <- function(Analysis_Type = AnalysisType,
     Total_Contrib_DB[i] <-  ER_NC_CurrentHires[i] + ER_NC_NewHires[i] + ER_Amo_CurrentHires[i] + ER_Amo_Stat_NewHires[i] + ER_Amo_ADC_NewHires[i] + 
       ER_Amo_ORP_CurrentHires[i] + ER_Amo_ORP_NewHires[i] + ER_Amo_RehRet[i] + Solv_Contrib_Total[i]
     
-    if(NewHirePlan == 'DB'){
-      Total_Contrib_DC[i] <- 0
-    } else if(DCForfeitures == 'Yes'){
+    #if(NewHirePlan == 'DB'){
+    #  Total_Contrib_DC[i] <- 0
+    #} else if(DCForfeitures == 'Yes'){
       Total_Contrib_DC[i] <- DC_Contrib*(ORPCurrentPayroll[i] + ORPNewPayroll[i])
-    }
+    #}
     
     Total_Contrib[i] <- Total_Contrib_DC[i] + Total_Contrib_DB[i]
     ER_InflAdj[i] <- Total_Contrib[i] / ((1 + asum_infl)^(FYE[i] - NC_StaryYear))
@@ -404,7 +409,7 @@ RunModel <- function(Analysis_Type = AnalysisType,
     TempValue <- min(EmployeeNC_CurrentHires[i-1]+(TotalContPost[i]-TotalContPost[i-1])/2,MaxEEContrib)
     EmployeeNC_CurrentHires[i] <- max(TempValue,0)
     
-    if(CostSharing_NC == 'Yes'){
+    if(CostSharingNC == 'Yes'){
       EmployeeNC_NewHires[i] <- NC_NewHires[i]/2
     } else {
       EmployeeNC_NewHires[i] <- EmployeeNC_CurrentHires[i]
@@ -417,7 +422,7 @@ RunModel <- function(Analysis_Type = AnalysisType,
     ER_AmoRate_NewHires[i] <- TotalContPost[i] - EmployerNC_NewHires[i]
     ER_AmoRate_Rehire[i] <- TotalContPost[i]
     
-    if(ORPOffset_DBNC == 'Yes'){
+    if(ORPOffsetDBNC == 'Yes'){
       ER_AmoRate_ORP[i] <- TotalContPost[i] - EmployerNC_CurrentHires[i]
     } else {
       ER_AmoRate_ORP[i] <- TotalContPost[i] - ORPOffset
@@ -449,6 +454,7 @@ for (i in 1:length(Scenarios)){
   NewData <- RunModel(ERPolicyCurrentHires = 'ADC', 
                       ERPolicyNewHires = 'ADC', 
                       Scen_Type = Scenarios[i])
+  
   Scenario_Returns <- cbind(Scenario_Returns,NewData$ROA_MVA)
   Scenario_UAL <- cbind(Scenario_UAL,NewData$UAL_MVA_InflAdj)
   Scenario_FR <- cbind(Scenario_FR,NewData$FR_MVA)
