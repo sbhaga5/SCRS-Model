@@ -83,9 +83,9 @@ HistoricalIndex <- StartProjectionYear - StartYear
 
 #Assign values for simulation
 if(SimType == 'Assumed'){
-  Sim_Return <- Sim_ReturnAssumed
-} else if(Analysis_Type == 'Conservative'){
-  Sim_Return <- Sim_ReturnConservative
+  SimReturn <- SimReturnAssumed
+} else if(AnalysisType == 'Conservative'){
+  SimReturn <- SimReturnConservative
 }
 
 #Initialize Amortization and Outstnading Base
