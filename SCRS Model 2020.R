@@ -83,9 +83,9 @@ HistoricalIndex <- StartProjectionYear - StartYear
 
 #Assign values for simulation
 if(SimType == 'Assumed'){
-  SimReturn <- SimReturnAssumed
-} else if(AnalysisType == 'Conservative'){
-  SimReturn <- SimReturnConservative
+  Sim_Return <- Sim_ReturnAssumed
+} else if(Analysis_Type == 'Conservative'){
+  Sim_Return <- Sim_ReturnConservative
 }
 
 #Initialize Amortization and Outstnading Base
@@ -115,7 +115,7 @@ for(i in StartIndex:length(FYE)){
   Tier3Payroll[i] <- DBLegacyPayroll[i] - Tier2Payroll[i]
   RehPayroll[i] <- (RehPayroll[i-1] + TERIPayroll[i-1])*(1 + Payroll_growth) - TERIPayroll[i]
   
-  ProjectedPayroll[i] <- ProjectedPayroll[i-1]*(1 + Payroll_ratio)
+  ProjectedPayroll[i] <- (AllCurrentHires[i] - ORPCurrentPayroll[i])*(1 + Payroll_ratio)
   ProjectedTier23Payroll[i] <- (Tier2Payroll[i] + Tier3Payroll[i])*(1 + Payroll_ratio)
   ProjectedTier4Payroll[i] <-  AllNewHires[i]*(1 + Payroll_ratio)
   
