@@ -164,14 +164,14 @@ RunModel <- function(Analysis_Type = AnalysisType,
                      ORPOffsetDBNC = ORPOffset_DBNC){
   
   #Default is statutory, change to ADC amo policy if need be
-  #if(ERPolicyCurrentHires == 'ADC'){
-  #  AmoYearsInput_CurrentHires[,2] <- 20
-  #  #AmoYearsInput_CurrentHires[1,2] <- 25
-  #}
+  if(ERPolicyCurrentHires == 'ADC'){
+    AmoYearsInput_CurrentHires[,2] <- 20
+    #AmoYearsInput_CurrentHires[1,2] <- 25
+  }
   
-  #if(ERPolicyNewHires == 'ADC'){
-  #  AmoYearsInput_NewHires[,2] <- 20
-  #}
+  if(ERPolicyNewHires == 'ADC'){
+    AmoYearsInput_NewHires[,2] <- 20
+  }
   
   #Offset Matrix. Used later for Amortization calculation
   OffsetYears_CurrentHires <- matrix(0,RowColCount, RowColCount)
