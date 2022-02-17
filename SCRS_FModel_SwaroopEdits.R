@@ -187,6 +187,7 @@ RunModel <- function(Analysis_Type = AnalysisType,
                      CostSharingAmo = CostSharing_Amo,
                      CostSharing_Pct = CostSharingPct,
                      ORPOffsetDBNC = ORPOffset_DBNC,
+                     StatFloorFullFunding = StatFloor_FullFunding,
                      AmoBaseIncCurrentHires = AmoBaseInc_CurrentHires,
                      AmoBaseIncNewHires = AmoBaseInc_NewHires,
                      AmoPeriod2018 = AmoPeriod_2018,
@@ -304,7 +305,7 @@ RunModel <- function(Analysis_Type = AnalysisType,
     #Set default to 0 for easier coding
     #Only code if for yes condition
     StatContFloor[i] <- 0
-    if(StatFloor_FullFunding == 'Yes'){
+    if(StatFloorFullFunding == 'Yes'){
       if(max(FR_AVA[StartIndex:i-1]) < 1){
         TotalContValue <- TotalContPost[i-2]*(TotalPayroll[i] + RehPayroll[i])
         Cashflows <- ER_NC_CurrentHires[i] + ER_NC_NewHires[i] + ER_Amo_CurrentHires[i] +
@@ -508,12 +509,13 @@ Scenarios <- c('Assumption','6% Constant','Recession','Recurring Recession')
 
 ############ RunModel ##############
 x <- RunModel(Scen_Type = Scenarios[1],
-              ERPolicyCurrentHires = 'Statutory Rate', 
-              ERPolicyNewHires = 'Statutory Rate',
+              ERPolicyCurrentHires = 'ADEC', 
+              ERPolicyNewHires = 'ADEC',
               ADEC_Trigger = 'Yes',
               CostSharingNC = 'No',
               CostSharingAmo = 'No',
-              ORPOffsetDBNC = 'No')
+              ORPOffsetDBNC = 'No',
+              StatFloorFullFunding = 'Yes')
 
 #View(x %>% select(Output, 
 #                  TotalContPost, 
