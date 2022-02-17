@@ -192,8 +192,6 @@ RunModel <- function(Analysis_Type = AnalysisType,
                      AmoPeriod2018 = AmoPeriod_2018,
                      AmoPeriod2028 = AmoPeriod_2028){
   
-  ERPolicyCurrentHires <- "ADEC"
-  ERPolicyNewHires <- "ADEC"
   #Default is statutory, change to ADC amo policy if need be
   if(ERPolicyCurrentHires == 'Statutory Rate'){
     AmoFundPeriod_Max <- AmoPeriod2018
